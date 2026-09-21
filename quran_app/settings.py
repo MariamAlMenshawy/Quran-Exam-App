@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,6 +47,13 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'drf_yasg',
 ]
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Quran Exam Admin",
+    "site_header": "Quran Exam App",
+    "site_brand": "Quran Exam",
+    "welcome_sign": "Welcome to the quran exam app",
+}
 
 AUTH_USER_MODEL = 'accounts.User'
 

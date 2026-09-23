@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'game',
     'quran',
     'rest_framework',
-    'rest_framework.authtoken',
     'drf_yasg',
 ]
 

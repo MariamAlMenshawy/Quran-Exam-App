@@ -10,7 +10,6 @@ class Session(models.Model):
     ]
     challenge_type = models.CharField(max_length=20, choices=CHALLENGE_CHOICES)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    questions = models.ManyToManyField(Ayah)
     user_answer = models.ForeignKey(Ayah, on_delete=models.CASCADE,null=True, related_name='user_answer')
     correct_answer = models.ForeignKey(Ayah, on_delete=models.CASCADE, related_name='correct_answer')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -24,3 +23,8 @@ class Session(models.Model):
             models.Index(fields=["challenge_type"]),
             models.Index(fields=["user", "-created_at"]),
         ]
+
+
+class SessionQuestion(models.Model):
+    session = models.ForeignKey(Session, on_delete=models.CASCADE)
+    ayah = models.ForeignKey(Ayah,on_delete=models.CASCADE)

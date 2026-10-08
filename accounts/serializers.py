@@ -36,14 +36,15 @@ class ForgetPasswordSerializer(serializers.Serializer):
 
     def validate_email(self, value):       # نتأكد الايميل موجود
         try:
-            user = User.objects.get(email=value)
+            self.user = User.objects.get(email=value)
         except User.DoesNotExist:
-            raise serializers.ValidationError("User not found")
-        self.user = user
+            self.user = None
         return value
 
     def create(self, validated_data): 
         user = self.user
+        if user is None:
+            return None
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
         reset_token = f"{uid}-{token}"

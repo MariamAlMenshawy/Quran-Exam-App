@@ -143,15 +143,14 @@ class TestForgetPassword(APITestCase):
         res = self.client.post(self.endpoint,data,format="json")
         self.assertEqual(res.status_code,200)
         self.assertIn("message",res.data)
-        self.assertIn("token",res.data)
 
     def test_not_exist_email(self):
         data = {
             "email":"notexist@gmail.com"
         }
         res = self.client.post(self.endpoint,data,format="json")
-        self.assertEqual(res.status_code,400)
-        self.assertIn("email",res.data)
+        self.assertEqual(res.status_code,200)
+        self.assertIn("message",res.data)
 
     def test_invalid_email(self):
         data = {

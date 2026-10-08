@@ -6,6 +6,9 @@ from .serializers import UserSerializer,ForgetPasswordSerializer,ResetPasswordSe
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework import status
+from django.core.mail import send_mail
+from django.conf import settings
+
 # Create your views here.
 
 # POST Create New User
@@ -33,11 +36,29 @@ class ForgetPassword(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.save()
-        return Response({
-            "message": "Password reset token generated successfully",
-            "token": data["token"]
-        },
-        status=status.HTTP_200_OK)
+        if data:
+            token = data["token"]
+            reset_url = (f"https://frontend-site.com/reset-forget-password?token={token}")
+            send_mail(
+                subject="Reset Your Password",
+                message=f"""
+Hello,
+You requested to reset your password.
+Please use the following link to reset your password:
+
+{reset_url}
+
+""",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[serializer.validated_data["email"]],
+                fail_silently=False,
+            )
+        return Response(
+            {
+                "message": "If user already in the system, you will receive an email message."
+            },
+            status=status.HTTP_200_OK
+        )
 
 
     

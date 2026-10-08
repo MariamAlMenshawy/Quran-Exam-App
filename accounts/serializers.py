@@ -44,7 +44,7 @@ class ForgetPasswordSerializer(serializers.Serializer):
     def create(self, validated_data): 
         user = self.user
         if user is None:
-            return None
+            return {}
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
         reset_token = f"{uid}-{token}"

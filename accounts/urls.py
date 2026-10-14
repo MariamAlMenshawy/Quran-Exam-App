@@ -11,5 +11,5 @@ urlpatterns = [
     path('user/profile/get/',views.GetProfile.as_view(),name='get_profile'),
     path('user/profile/update/',views.UpdateProfile.as_view(),name='update_profile'),
     path('user/change-password/',views.ChangePassword.as_view(),name='change_password'),
-
+    
 ]

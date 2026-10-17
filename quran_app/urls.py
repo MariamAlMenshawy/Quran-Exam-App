@@ -29,6 +29,7 @@ schema_view = swagger_get_schema_view(
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
+    url="https://quran-exam-app.enzonic.dev",
 )
 
 

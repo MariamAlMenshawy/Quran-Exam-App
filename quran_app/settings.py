@@ -214,3 +214,8 @@ CORS_ALLOWED_ORIGINS = env.list(
         "http://localhost:5173",
     ],
 )
+
+CSRF_TRUSTED_ORIGINS = env.list(
+    "CSRF_TRUSTED_ORIGINS",
+    default=[],
+)

@@ -56,6 +56,6 @@ class IPv4SMTP_SSL(smtplib.SMTP_SSL):
 class IPv4EmailBackend(EmailBackend):
     """Django SMTP backend that forces IPv4 connections."""
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.connection_class = IPv4SMTP_SSL if self.use_ssl else IPv4SMTP
+    @property
+    def connection_class(self):
+        return IPv4SMTP_SSL if self.use_ssl else IPv4SMTP

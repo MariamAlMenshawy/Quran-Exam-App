@@ -3,3 +3,7 @@ venv/
 __pycache__/
 *.pyc
 db.sqlite3
+staticfiles/
+client_secret.json
+gmail_token.json
+gmail_oauth_setup.py

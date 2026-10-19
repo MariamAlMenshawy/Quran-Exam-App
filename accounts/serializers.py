@@ -34,29 +34,33 @@ class UserSerializer(serializers.ModelSerializer):
 class ForgetPasswordSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
-    def validate_email(self, value):       # نتأكد الايميل موجود
+    def validate_email(self, value):
         try:
             self.user = User.objects.get(email=value)
         except User.DoesNotExist:
             self.user = None
         return value
 
-    def create(self, validated_data): 
+    def create(self, validated_data):
         user = self.user
         if user is None:
             return {}
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
-        reset_token = f"{uid}-{token}"
-        return { "token": reset_token }
+        return {
+            "uid": uid,
+            "token": token
+        }
 
 
 class ResetPasswordSerializer(serializers.Serializer):
+    uid = serializers.CharField()
     token = serializers.CharField()
-    new_password = serializers.CharField()
-    confirm_password = serializers.CharField()
+    new_password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
+        uid = attrs.get('uid')
         token = attrs.get('token')
         new_password = attrs.get('new_password')
         confirm_password = attrs.get('confirm_password')
@@ -65,14 +69,13 @@ class ResetPasswordSerializer(serializers.Serializer):
                 {"confirm_password": "Passwords do not match."}
             )
         try:
-            uid, reset_token = token.split("-", 1)
             user_id = urlsafe_base64_decode(uid).decode()
             user = User.objects.get(pk=user_id)
-        except (ValueError, TypeError, User.DoesNotExist):
+        except (ValueError, TypeError, OverflowError, UnicodeDecodeError, User.DoesNotExist):
             raise serializers.ValidationError(
-                {"token": "Invalid token"}
+                {"uid": "Invalid UID"}
             )
-        if not default_token_generator.check_token(user,reset_token):
+        if not default_token_generator.check_token(user, token):
             raise serializers.ValidationError(
                 {"token": "Invalid or expired token"}
             )
@@ -84,7 +87,7 @@ class ResetPasswordSerializer(serializers.Serializer):
         new_password = validated_data['new_password']
         user.set_password(new_password)
         user.save()
-        return user   
+        return user
 
 
 class UpdateProfileSerializer(serializers.ModelSerializer):

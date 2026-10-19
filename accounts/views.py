@@ -36,23 +36,31 @@ class ForgetPassword(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.save()
+
         if data:
+            uid = data["uid"]
             token = data["token"]
-            reset_url = (f"https://frontend-site.com/reset-forget-password?token={token}")
+            reset_url = (
+                f"https://rettil-app.vercel.app/reset-password?uid={uid}&token={token}"
+            )
             send_mail(
                 subject="Reset Your Password",
                 message=f"""
 Hello,
+
 You requested to reset your password.
+
 Please use the following link to reset your password:
 
 {reset_url}
 
+If you did not request this, please ignore this email.
 """,
                 from_email=settings.EMAIL_HOST_USER,
                 recipient_list=[serializer.validated_data["email"]],
                 fail_silently=False,
             )
+
         return Response(
             {
                 "message": "If user already in the system, you will receive an email message."
@@ -60,7 +68,7 @@ Please use the following link to reset your password:
             status=status.HTTP_200_OK
         )
 
-
+		
     
 class ResetPassword(CreateAPIView):
     serializer_class = ResetPasswordSerializer
@@ -74,6 +82,7 @@ class ResetPassword(CreateAPIView):
             "message": "Password reset successfully"
         },
         status=status.HTTP_200_OK)
+		
 
 class GetProfile(RetrieveAPIView):
     permission_classes=[IsAuthenticated]
